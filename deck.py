@@ -2,8 +2,11 @@ import random
 import click
 
 class Deck:
-    def __init__(self):
-        self.deck = self._generate_deck()
+    def __init__(self, pre=None):
+        if pre == None:
+            self.deck = self._generate_deck()
+        else:
+            self.deck = pre
 
     def _generate_deck(self):
         ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
@@ -11,7 +14,11 @@ class Deck:
         deck = []
         for suit in suits:
             for rank in ranks:
-                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank)}
+                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank),}
+                if len(rank) > 2:
+                    card["abrev"] = rank[0]
+                else:
+                    card["abrev"] = rank
                 deck.append(card)
         return deck
 
@@ -33,7 +40,7 @@ class Deck:
         return self.deck.pop()
 
     @property
-    def deck_count(self):
-        return len(self.deck)
+    def remaining(self):
+        return len(self.deck["deck"])
 
         
