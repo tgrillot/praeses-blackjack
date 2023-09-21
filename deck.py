@@ -11,10 +11,12 @@ class Deck:
     def _generate_deck(self):
         ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
         suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+        syms = ["\u2665","\u2666","\u2663","\u2660"]
         deck = []
         for suit in suits:
+            sym = syms[suits.index(suit)]
             for rank in ranks:
-                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank),}
+                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank), "sym":sym}
                 if len(rank) > 2:
                     card["abrev"] = rank[0]
                 else:

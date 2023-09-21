@@ -1,0 +1,35 @@
+to do 
+- add betting
+- implement game rounds and reshuffle
+- write readme
+- flesh out helps
+- clean up
+
+
+
+doing
+- implement evaluations
+
+
+
+
+done
+- implement options on play command to start new game or continue existing game
+- make sure dealer 2nd card is hidden for first round
+- implement stand and hit functions
+- convert to setup tools
+- see if its possible to use suit symbols instead of letters
+
+
+
+
+
+
+installation instructions:
+
+clone repo
+open terminal to program directory
+create venv
+activate venv
+run `pip install --editable .`
+run `pbj` to view help file

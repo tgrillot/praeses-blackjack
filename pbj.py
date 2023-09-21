@@ -5,8 +5,8 @@ from os.path import isfile
 import json
 
 class Pbj:
-    def __init__(self):
-        if not isfile('state.json'):
+    def __init__(self,newgame=False):
+        if not isfile('state.json') or newgame:
             data = {}
             data['prog'] = "New"
             with open('state.json', 'w') as f:
@@ -24,7 +24,7 @@ class Pbj:
             return
         self.turn = state["turn"]
         self.prog = state["prog"]
-        self.deck = Deck(state["deck"])
+        self.deck = Deck(state["deck"]["deck"])
         self.dealer = Player(state["dealer"])
         self.players = []
         for player in state["players"]:
@@ -33,18 +33,6 @@ class Pbj:
     def _write_state(self):
         with open('state.json', 'w') as f:
             json.dump(self, f, default=lambda o: o.__dict__, sort_keys=True, indent=4)
-
-    def play(self, pcount):
-        if self.prog == "Cont":
-            self.display_game_state()
-            return
-        click.echo('Lets play some blackjack.')
-        self.players = self._generate_players(pcount)
-        self.deck.shuffle()    
-        self._deal_cards()
-        self.prog = "Cont"
-        self._write_state()
-        self.display_game_state()
 
     def _generate_players(self, pcount):
         players = []
@@ -62,24 +50,65 @@ class Pbj:
             self.dealer.hand.append(self.deck.draw_card())
             deal += 1
 
-    def display_game_state(self):
-        click.clear()
+    def _display_state(self):
+        #click.clear()
         click.echo("---------- Blackjack Game In Progress ----------")
         click.echo()
-
         click.echo("Dealer's Hand:")
-        click.echo(self.dealer.get_hand_ascii())
+        click.echo(self.dealer.get_hand_ascii("d",self.turn,len(self.players)))
+        if self.dealer.nat == True:
+            click.echo("Natural 21!")
         click.echo()
 
         for player_idx, player in enumerate(self.players):
             click.echo(f"Player {player_idx + 1}'s Hand:")
-            click.echo(player.get_hand_ascii())
+            click.echo(player.get_hand_ascii("p",self.turn,len(self.players)))
+            click.echo("Hand Value: " + str(player.total))
+            if player.nat == True:
+                click.echo("Natural 21!")
+            if player.bust == True:
+                click.echo("Bust!")
             click.echo()
 
         progress = self.prog
         turn = self.turn
         if progress == "Cont":
-            click.echo(f"Game in progress. It's Player {turn + 1}'s turn.")
+            click.echo(f"It's Player {turn}'s turn. Please choose whether to hit or stand.")
         elif progress == "End":
             click.echo("Game over.")
         click.echo()
+    
+    def _eval_all(self):
+        click.echo("Evaluating hands...")
+        self.dealer.evaluate()
+        for player in self.players:
+            player.evaluate()
+    
+    def play(self, pcount, ):
+        if self.prog == "Cont":
+            self._display_state()
+            return
+        click.echo('Lets play some blackjack.')
+        self.players = self._generate_players(pcount)
+        self.deck.shuffle()    
+        self._deal_cards()
+        self.prog = "Cont"
+        self.turn = 1
+        self._eval_all()
+        self._write_state()
+        self._display_state()
+
+    def hit(self):
+        pi = self.turn - 1
+        self.players[pi].hand.append(self.deck.draw_card())
+        self.players[pi].evaluate()
+        if self.players[pi].total >= 21:
+            self.turn += 1
+        self._write_state()
+        self._display_state()
+        
+    
+    def stand(self):
+        self.turn += 1
+        self._write_state()
+        self._display_state()
