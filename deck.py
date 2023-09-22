@@ -9,25 +9,19 @@ class Deck:
             self.deck = pre
 
     def _generate_deck(self):
-        ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
-        suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
-        syms = ["\u2665","\u2666","\u2663","\u2660"]
+        ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+        suits = ["\u2665","\u2666","\u2663","\u2660"]
         deck = []
         for suit in suits:
-            sym = syms[suits.index(suit)]
             for rank in ranks:
-                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank), "sym":sym}
-                if len(rank) > 2:
-                    card["abrev"] = rank[0]
-                else:
-                    card["abrev"] = rank
+                card = {"rank": rank, "suit": suit, "value": self._get_card_value(rank)}
                 deck.append(card)
         return deck
 
     def _get_card_value(self, rank):
-        if rank in ["10", "Jack", "Queen", "King"]:
+        if rank in ["10", "J", "Q", "K"]:
             return 10
-        elif rank == "Ace":
+        elif rank == "A":
             return 11
         else:
             return int(rank)

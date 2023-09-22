@@ -1,14 +1,18 @@
 to do 
+
+(optional)
 - add betting
 - implement game rounds and reshuffle
+- implement multideck game
+
+(req'd)
 - write readme
 - flesh out helps
 - clean up
-
-
+    
 
 doing
-- implement evaluations
+
 
 
 
@@ -19,9 +23,9 @@ done
 - implement stand and hit functions
 - convert to setup tools
 - see if its possible to use suit symbols instead of letters
-
-
-
+- skip turn/automatically stand if player has a natural
+- implement evaluations
+- reduce redundancy in state file
 
 
 

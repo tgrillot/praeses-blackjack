@@ -15,7 +15,7 @@ class Player:
         total = 0
         aces = 0
         for card in self.hand:
-            if card["rank"] == 'Ace':
+            if card["rank"] == 'A':
                 aces += 1
             else:
                 total += card["value"]
@@ -33,22 +33,22 @@ class Player:
 
     def get_hand_ascii(self, ptype, turn, pcount):
         hidden = False
-        if ptype == "d" and turn < pcount + 1:
+        if ptype == "d" and turn <= pcount:
             hidden = True
         ascii = [""] * 7
         for card in self.hand:
             if self.hand.index(card) > 0 and hidden and not self.nat:
-                sym = "?"
-                abrev = " "
+                suit = "?"
+                rank = " "
             else:
-                sym = card['sym']
-                abrev = card['abrev']
+                suit = card['suit']
+                rank = card['rank']
             ascii[0] += "┌───────┐ "
-            ascii[1] += f"│ {abrev:^2}    │ "
+            ascii[1] += f"│ {rank:^2}    │ "
             ascii[2] += "│       │ "
-            ascii[3] += f"│   {sym}   │ "
+            ascii[3] += f"│   {suit}   │ "
             ascii[4] += "│       │ "
-            ascii[5] += f"│    {abrev:>2} │ "
+            ascii[5] += f"│    {rank:>2} │ "
             ascii[6] += "└───────┘ "
-        ascii = "\n".join(ascii) + "\n"
+        ascii = "\n".join(ascii)
         return ascii

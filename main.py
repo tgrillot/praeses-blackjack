@@ -5,7 +5,7 @@ from pbj import Pbj
 
 def cli():
     """
-        Preses Blackjack
+        Praeses Blackjack
     """
 
 @cli.command()
