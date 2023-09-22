@@ -3,6 +3,7 @@ from player import Player
 import click
 from os.path import isfile
 import json
+from random import randint
 
 class Pbj:
 
@@ -10,10 +11,11 @@ class Pbj:
 #   Game Setup   #
 ##################
 
-    def __init__(self,newgame=False):
+    def __init__(self,decks=None,newgame=False):
         if not isfile('state.json') or newgame:
             data = {}
             data['prog'] = "New"
+            data['decks'] = decks
             with open('state.json', 'w') as f:
                 json.dump(data,f)
         self._read_state()
@@ -43,13 +45,15 @@ class Pbj:
             state = json.load(f)
         if state["prog"] == "New" or state["prog"] == "End":
             self.prog = "New"
-            self.deck = Deck()
+            self.decks = state["decks"]
+            self.deck = Deck(self.decks)
             self.dealer = Player()
             self.turn = 0
             return
         self.turn = state["turn"]
         self.prog = state["prog"]
-        self.deck = Deck(state["deck"]["deck"])
+        self.decks = state["decks"]
+        self.deck = Deck(self.decks,state["deck"]["deck"])
         self.dealer = Player(state["dealer"])
         self.players = []
         for player in state["players"]:
@@ -149,13 +153,15 @@ class Pbj:
         self.dealer.evaluate()
         self._dealer_play()
 
-    def play(self, pcount, ):
+    def play(self, pcount):
         if self.prog == "Cont":
             self._display_state()
             return
         click.echo('Lets play some blackjack.')
         self.players = self._generate_players(pcount)
-        self.deck.shuffle()    
+        self.deck.shuffle()
+        if self.decks > 1:
+            self.deck.cut(click.prompt('Dealer prompts player ' + str(randint(1,len(self.players))) + ' to cut the deck. Please enter a number between 0 and 5.',type=click.FloatRange(0,5)),self.decks)
         self._deal_cards()
         self.prog = "Cont"
         self.turn = 1
