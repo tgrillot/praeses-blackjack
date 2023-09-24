@@ -5,12 +5,12 @@ to do
 
 
 (req'd)
-- write readme
+
 - clean up
     
 
 doing
-- implement betting
+
 
 
 done
@@ -27,6 +27,8 @@ done
 - flesh out helps
 - implement game rounds
 - implement reshuffle
+- implement betting
+- write readme
 
 
 

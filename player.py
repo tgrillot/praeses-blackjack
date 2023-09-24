@@ -37,6 +37,7 @@ class Player:
         if len(self.hand) == 2 and total == 21:
             self.nat = True
 
+
     def get_hand_ascii(self, ptype, turn, pcount):
         hidden = False
         if ptype == "d" and turn <= pcount:
@@ -58,3 +59,10 @@ class Player:
             ascii[6] += "└───────┘ "
         ascii = "\n".join(ascii)
         return ascii
+
+    def new_round_reset(self):
+        self.hand = []
+        self.bust = False
+        self.nat = False
+        self.total = 0
+        self.bet = 0
