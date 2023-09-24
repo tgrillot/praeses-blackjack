@@ -1,29 +1,39 @@
 import click
 from pbj import Pbj
+from extend_click import MutExOption
 
 @click.group()
 
 def cli():
     """
-        Praeses Blackjack
+        \u2665 \u2666 \u2663 \u2660 Praeses Blackjack \u2665 \u2666 \u2663 \u2660
+
+        Play Blackjack in the command line.
     """
 
 @cli.command()
 @click.option('-p','--players',type=click.IntRange(2,7),default=2, help='The number players in the game, from 2 to 7. ')
-@click.option('-n','--newgame',is_flag=True, default=False, help='Start a new game if there is a current game in progress.')
-@click.option('-d','--decks',type=click.IntRange(1,8),default=1, help='The number of decks in the pack, from 1 to 8.' )
-def play(players,newgame,decks):
-    """Start or continue a game of blackjack."""
-    game = Pbj(decks,newgame)
-    game.play(players)
+@click.option('-d','--decks',type=click.IntRange(1,8),default=1,help='The number of decks in the pack, from 1 to 8.' )
+@click.option('-n','--newgame',is_flag=True,default=False,cls=MutExOption,mut_ex=["continue"],help='Start a new game if there is a current game in progress.')
+@click.option('-c','--continue_game',is_flag=True,default=False,cls=MutExOption,mut_ex=["newgame"], help='Continue the previous game with a new round.')
+def play(players,newgame,decks,continue_game):
+    """
+    Start or continue a game of blackjack.
+
+    A game round in progress will be continued automatically with no options. If a game round has ended, a new game will be started by default if the continue_game argument is not used. In the case of either continuing a round, or continuing a game with a new round, the players, and decks arguments will not have any effect.    
+    """
+    game = Pbj(decks,newgame,continue_game)
+    game.play(players,continue_game)
 
 @cli.command()
 def hit():
+    """Indicate the current player would like to hit."""
     game = Pbj()
     game.hit()
 
 @cli.command()
 def stand():
+    """Indicate the current player would like to stand."""
     game = Pbj()
     game.stand()
 

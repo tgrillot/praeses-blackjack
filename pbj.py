@@ -11,14 +11,14 @@ class Pbj:
 #   Game Setup   #
 ##################
 
-    def __init__(self,decks=None,newgame=False):
+    def __init__(self,decks=None,newgame=False,continue_game=False):
         if not isfile('state.json') or newgame:
             data = {}
             data['prog'] = "New"
             data['decks'] = decks
             with open('state.json', 'w') as f:
                 json.dump(data,f)
-        self._read_state()
+        self._read_state(continue_game)
 
     def _generate_players(self, pcount):
         players = []
@@ -32,32 +32,48 @@ class Pbj:
         deal = 0
         while deal < 2:
             for player in self.players:
-                player.hand.append(self.deck.draw_card())
-            self.dealer.hand.append(self.deck.draw_card())
+                player.hand.append(self._eval_cut(self.deck.draw_card()))
+            self.dealer.hand.append(self._eval_cut(self.deck.draw_card()))
             deal += 1
 
 ##################
 #   Game State   #
 ##################
 
-    def _read_state(self):
+    def _read_state(self, continue_game=False):
         with open('state.json', 'r') as f:
             state = json.load(f)
-        if state["prog"] == "New" or state["prog"] == "End":
+        if state["prog"] == "New" or state["prog"] == "End" and not continue_game:
             self.prog = "New"
             self.decks = state["decks"]
             self.deck = Deck(self.decks)
             self.dealer = Player()
             self.turn = 0
+            self.round = 1
             return
         self.turn = state["turn"]
         self.prog = state["prog"]
         self.decks = state["decks"]
+        self.round = state["round"]
         self.deck = Deck(self.decks,state["deck"]["deck"])
         self.dealer = Player(state["dealer"])
         self.players = []
         for player in state["players"]:
             self.players.append(Player(player))
+        if continue_game:
+            self.prog = "Cont"
+            self.round += 1
+            self.turn = 0
+            self.dealer.hand = []
+            self.dealer.bust = False
+            self.dealer.nat = False
+            self.dealer.total = 0
+            for player in self.players:
+                player.hand = []
+                player.bust = False
+                player.nat = False
+                player.total = 0
+
         
     def _write_state(self):
         with open('state.json', 'w') as f:
@@ -65,7 +81,7 @@ class Pbj:
 
     def _display_state(self):
         self._eval_player_nat()
-        click.echo("------------------ Praeses Blackjack ------------------")
+        click.echo("\u2665 \u2666 \u2663 \u2660 \u2665 \u2666 \u2663 \u2660 Praeses Blackjack \u2665 \u2666 \u2663 \u2660 \u2665 \u2666 \u2663 \u2660")
         click.echo()
         click.echo("Dealer's Hand:")
         click.echo(self.dealer.get_hand_ascii("d",self.turn,len(self.players)))
@@ -87,6 +103,7 @@ class Pbj:
                 click.echo("Bust!")
             click.echo()
 
+        click.echo("Round " + str(self.round))
         if self.prog == "Cont":
             click.echo(f"It's Player {self.turn}'s turn. Please choose whether to hit or stand.")
         elif self.prog == "End":
@@ -117,6 +134,21 @@ class Pbj:
             self.prog = "End"
         self._write_state()
         self._display_state()
+
+    def _eval_cut(self, card):
+        if card["rank"] != 'C':
+            return card
+        click.echo("Cut card reached.")
+        cards_in_Play = []
+        for player in self.players:
+            cards_in_Play += player.hand
+        self.deck = Deck(self.decks)
+        for in_play in cards_in_Play:
+            self.deck.deck.pop(self.deck.deck.index(in_play))
+        self.deck.shuffle()
+        self.deck.cut(click.prompt('Dealer prompts player ' + str(randint(1,len(self.players))) + ' to cut the deck. Please enter a number between 0 and 5.',type=click.FloatRange(0,5)),self.decks)
+        card = self.deck.draw_card()
+        return card
 
     def _eval_endgame(self):
         click.echo("Endgame:")
@@ -153,15 +185,16 @@ class Pbj:
         self.dealer.evaluate()
         self._dealer_play()
 
-    def play(self, pcount):
-        if self.prog == "Cont":
+    def play(self, pcount, continue_game=False):
+        if self.prog == "Cont" and not continue_game:
             self._display_state()
             return
         click.echo('Lets play some blackjack.')
-        self.players = self._generate_players(pcount)
-        self.deck.shuffle()
-        if self.decks > 1:
-            self.deck.cut(click.prompt('Dealer prompts player ' + str(randint(1,len(self.players))) + ' to cut the deck. Please enter a number between 0 and 5.',type=click.FloatRange(0,5)),self.decks)
+        if not continue_game:
+            self.players = self._generate_players(pcount)
+            self.deck.shuffle()
+            if self.decks > 1:
+                self.deck.cut(click.prompt('Dealer prompts player ' + str(randint(1,len(self.players))) + ' to cut the deck. Please enter a number between 0 and 5.',type=click.FloatRange(0,5)),self.decks)
         self._deal_cards()
         self.prog = "Cont"
         self.turn = 1
@@ -173,7 +206,7 @@ class Pbj:
             click.echo("Please use the 'play' command to start a new game.")
             return
         pi = self.turn - 1
-        self.players[pi].hand.append(self.deck.draw_card())
+        self.players[pi].hand.append(self._eval_cut(self.deck.draw_card()))
         self.players[pi].evaluate()
         if self.players[pi].total >= 21:
             self.turn += 1

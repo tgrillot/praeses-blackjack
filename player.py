@@ -5,11 +5,17 @@ class Player:
             self.bust = False
             self.nat = False
             self.total = 0
+            self.bet = 0
+            self.winnings = 0
+            self.losings = 0
         else:
             self.hand = pre["hand"]
             self.bust = pre["bust"]
             self.nat = pre["nat"]
             self.total = pre["total"]
+            self.bet = pre["bet"]
+            self.winnings = pre["winnings"]
+            self.losings = pre["losings"]
 
     def evaluate(self):
         total = 0

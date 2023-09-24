@@ -1,21 +1,16 @@
 to do 
 
 (optional)
-- implement game rounds
-- implement reshuffle
-- implement betting
+
 
 
 (req'd)
 - write readme
-- flesh out helps
 - clean up
     
 
 doing
-
-
-
+- implement betting
 
 
 done
@@ -29,6 +24,10 @@ done
 - reduce redundancy in state file
 - implement multideck game
 - implement cut
+- flesh out helps
+- implement game rounds
+- implement reshuffle
+
 
 
 installation instructions:
@@ -39,3 +38,16 @@ create venv
 activate venv
 run `pip install --editable .`
 run `pbj` to view help file
+
+
+
+
+
+
+
+if continue game:
+- prog needs to be set to cont
+- round needs to be incremented
+- player hands need to be cleared
+- new hands need to be dealt
+- 
