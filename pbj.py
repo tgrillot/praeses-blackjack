@@ -71,7 +71,6 @@ class Pbj:
             for player in self.players:
                 player.new_round_reset()
 
-        
     def _write_state(self):
         with open('state.json', 'w') as f:
             json.dump(self, f, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -110,8 +109,7 @@ class Pbj:
             if player.bust:
                 click.echo("Bust!")
             click.echo()
-
-        
+ 
         if self.prog == "Cont":
             click.echo("Round " + str(self.round))
             click.echo(f"It's Player {self.turn}'s turn. Please choose whether to hit or stand.")

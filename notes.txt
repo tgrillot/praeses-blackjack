@@ -2,15 +2,10 @@ to do
 
 (optional)
 
-
-
 (req'd)
 
-- clean up
-    
 
 doing
-
 
 
 done
@@ -29,27 +24,6 @@ done
 - implement reshuffle
 - implement betting
 - write readme
+- clean up
 
 
-
-installation instructions:
-
-clone repo
-open terminal to program directory
-create venv
-activate venv
-run `pip install --editable .`
-run `pbj` to view help file
-
-
-
-
-
-
-
-if continue game:
-- prog needs to be set to cont
-- round needs to be incremented
-- player hands need to be cleared
-- new hands need to be dealt
-- 

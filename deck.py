@@ -42,8 +42,4 @@ class Deck:
             return None
         return self.deck.pop(0)
 
-    @property
-    def remaining(self):
-        return len(self.deck["deck"])
-
         

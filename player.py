@@ -37,7 +37,6 @@ class Player:
         if len(self.hand) == 2 and total == 21:
             self.nat = True
 
-
     def get_hand_ascii(self, ptype, turn, pcount):
         hidden = False
         if ptype == "d" and turn <= pcount:
